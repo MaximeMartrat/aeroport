@@ -137,8 +137,7 @@ app.post('/create', function(req,res){
                 res.render("confirm", { 'element': "l'avion a bien été créé" })
             })
         })
-    }
-    if(tabname == 'aeroport') {
+    } else if(tabname == 'aeroport') {
         conHandler.connect(function(err) {
             if(err) throw err ;
             let ville = req.body.ville ;
@@ -157,8 +156,67 @@ app.post('/create', function(req,res){
                 res.render("confirm", { 'element': "l'aeroport a bien été créé" })
             })
         })
+    } else if(tabname == 'pilote') {
+        conHandler.connect(function(err) {
+            if(err) throw err ;
+            let nom = req.body.nom ;
+            let adresse = req.body.adresse ;
+            let salaire = req.body.salaire ;
+            let qualification = req.body.qualification ;
+            let myquery = "INSERT INTO " + tabname + " (nom, adresse, salaire, qualification) " ;
+            myquery += "VALUES ('"+  
+            nom + "' , '" +
+            adresse + "' , " +
+            salaire + " , '" +
+            qualification + "' ) " ;
+            console.log(myquery) ;
+            //j'execute la requete
+            conHandler.query(myquery, function(err, results, fields) {
+                if(err) throw err;
+                console.log(results);
+                res.render("confirm", { 'element': "le pilote a bien été ajouté" })
+            })
+        })
+    } else if(tabname == 'vol'){
+        conHandler.connect(function(err) {
+            if(err) throw err ;
+            let id_depart = req.body.id_depart ;
+            let id_arrive = req.body.id_arrive ;
+            let horaire = req.body.horaire ;
+            let nbre_pass = req.body.nbre_pass ;
+            let id_pilote = req.body.id_pilote
+            let myquery = "INSERT INTO " + tabname + " (nom, adresse, salaire, qualification) " ;
+            myquery += "VALUES ('"+  
+            nom + "' , '" +
+            adresse + "' , " +
+            salaire + " , '" +
+            qualification + "' ) " ;
+            console.log(myquery) ;
+            //j'execute la requete
+            conHandler.query(myquery, function(err, results, fields) {
+                if(err) throw err;
+                console.log(results);
+                res.render("confirm", { 'element': "le pilote a bien été ajouté" })
+            })
+        })
     }
 });
+
+// app.get('/volSelect', function(req,res) {
+//     // let myquery = "SELECT avion.id_avion, avion.constructeur, avion.type, pilote.pilote_id, pilote.nom, aeroport.id_aeroport, aeroport.ville FROM vol" ;
+//     // myquery += "INNER JOIN aeroport ON vol.id_depart=aeroport.id_aeroport " ;
+//     // myquery += "INNER JOIN avion ON vol.id_avion=avion.id_avion " ;  
+//     // myquery += "INNER JOIN pilote ON vol.id_pilote=pilote.id_pilote";
+//     let avionTab = "SELECT constructeur, ville, nom FROM avion, aeroport, pilote";
+//     let aeroportTab = "SELECT ville FROM aeroport";
+//     let piloteTab = "SELECT nom FROM pilote";
+//     let allTab = avionTab + " UNION " + aeroportTab + " UNION " + piloteTab 
+//     console.log(allTab)
+//     conHandler.query(allTab, function (err, results, fields) {
+//             if (err) throw err;
+//             console.log(results);
+//     });//end funct da
+// });
 
 app.get('/mod_avion', function(req,res){
     res.render("mod_avion", { 'title' : "action sur entité avion" })

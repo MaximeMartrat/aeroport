@@ -8,7 +8,7 @@
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Della+Respira&family=Poppins&family=Ubuntu&display=swap" rel="stylesheet">
         <script src="https://kit.fontawesome.com/c68e41c693.js" crossorigin="anonymous"></script>
-        <title>BWBAirlines</title>
+        <title>Ajouter</title>
     </head>
     <body>
         <style>
@@ -19,25 +19,81 @@
                 font-family: 'Ubuntu', sans-serif;
             }
             body {
-                height: 100vh;
-                width: 100vw;
+                height: 98vh;
+                width: 99vw;
+                display: grid;
+                grid-template-rows: 10% 90%;
             }
+            #grid_container{
+                display: grid;
+                grid-template-columns: 25% 25% 25% 25%;
+                grid-template-rows: 10% 80% 10%;
+            } 
             form{
                 margin-left: 50px;
             }
+            #create_avion{
+                grid-column: 1;
+                grid-row: 2;
+            }
+            #create_aeroport{
+                grid-column: 2;
+                grid-row: 2;
+            }
+            #create_pilote{
+                grid-column: 3;
+                grid-row: 2;
+            }
+            #create_vol{
+                grid-column: 4;
+                grid-row: 2;
+            }
+            h3{
+                margin-left: 20px ;
+                font-size: 20px;
+                color:rgb(96, 92, 194);
+                text-shadow: 2px 2px 0px rgb(242, 238, 243);
+            }
             input{
+                font-size: 15px;
                 height: 20px;
+                width: 250px;
                 padding:5px;
+                margin-top: 10px;
+                margin-bottom: 10px;
                 border-radius: 5px;
+                border: 1px solid rgb(193, 193, 249);
+            }
+            input:hover, select:hover{
+                cursor: pointer;
+                border: 1px solid rgb(144, 144, 241);
+                background-color: rgb(231, 231, 250);;
+            }
+            select{
+                height: 35px;
+                width: 260px;
+                padding:5px;
+                margin-top: 10px;
+                margin-bottom: 10px;
+                border-radius: 5px;
+                border: 1px solid rgb(193, 193, 249);
             }
             button{
-                height: 30px;
-                padding:5px;
-                border-radius: 5px;
+                height: 50px;
+                width: 50px;
+                font-size: 30px;
+                margin-top: 10px;
+                margin-left: 25%;
+                color: white;
+                border-radius: 10px;
+                background-color: rgb(96, 92, 194);
+                border:1px solid rgb(193, 193, 249);
             }
             button:hover{
-                background-color:rgb(159, 159, 214);
-                color: white;
+                color: rgb(96, 92, 194);
+                background-color: rgb(193, 193, 249);
+                border:1px solid rgb(96, 92, 194);
+                cursor: pointer;
             }
             h2{
                 text-align: center;
@@ -47,28 +103,88 @@
             }
         </style>
 
-        <h2>Create all entities</h2>
-        <!-- un formulaire entité -->
-        <form id="create_avion" method="POST">
-            <label>Avion</label><br>
-            <input type="hidden" value="avion" name="table">
-            <input type="text" value="constructeur" name="constructeur">
-            <input type="text" value="type" name="type">
-            <input type="text" value="200" name="rayon_action">
-            <input type="text" value="200" name="capacite">
-            <input type="date" name="date_achat">
-            <input type="date" name="date_revision">
-            <button>OK</button>
-        </form>
-<br><br>
-        <form id="create_aeroport" method="POST">
-            <label>Aeroport</label><br>
-            <input type="hidden" value="aeroport" name="table">
-            <input type="text" value="ville" name="ville">
-            <input type="text" value="3" name="nbre_pistes">
-            <input type="text" value="/aero_img/avion.png" name="URL_image">
+        <h2>Ajouter des éléments</h2>
+        <div id="grid_container">
+            <!-- un formulaire entité -->
+            <form id="create_avion" method="POST">
+                <h3>AVION</h3>
+                <input type="hidden" value="avion" name="table">
+                <label for="constructeur">Constructeur</label><br>
+                <input type="text" value="constructeur" name="constructeur"><br>
+                <label for="type">Modèle</label><br>
+                <input type="text" value="type" name="type"><br>
+                <label for="rayon_action">Autonomie</label><br>
+                <input type="text" value="2000" name="rayon_action"><br>
+                <label for="capacite">Capacite</label><br>
+                <input type="text" value="200" name="capacite"><br>
+                <label for="date_achat">Date d'achat</label><br>
+                <input type="date" name="date_achat"><br>
+                <label for="date_revision">Dernière révision</label><br>
+                <input type="date" name="date_revision">
+                <br>
+                <button><i class="fa-solid fa-plus"></i></button>
+            </form>
+            <br><br>
+            <form id="create_aeroport" method="POST">
+                <h3>AEROPORT</h3>
+                <input type="hidden" value="aeroport" name="table">
+                <label for="ville">Ville</label><br>
+                <input type="text" value="ville" name="ville"><br>
+                <label for="nbre_piste">Pistes</label><br>
+                <input type="text" value="3" name="nbre_pistes"><br>
+                <label for="URL_image">Image</label><br>
+                <input type="text" value="/aero_img/avion.png" name="URL_image">
+                <br>
+                <button><i class="fa-solid fa-plus"></i></button>
+            </form>
+            <br><br>
+            <form id="create_pilote" method="POST">
+                <h3>PILOTE</h3>
+                <input type="hidden" value="pilote" name="table">
+                <label for="nom">Nom</label><br>
+                <input type="text" value="nom" name="nom"><br>
+                <label for="adresse">Adresse</label><br>
+                <input type="text" value="adresse" name="adresse"><br>
+                <label for="salaire">Salaire</label><br>
+                <input type="text" value="25000" name="salaire"><br>
+                <label for="qualification">Qualification</label><br>
+                <input type="text" value="qualification" name="qualification">
+                <br>
+                <button><i class="fa-solid fa-plus"></i></button>
+            </form>
+            <br><br>
+            <form id="create_vol" method="POST">
+                <h3>VOL</h3>
+                <input type="hidden" value="vol" name="table">
+                <label for="nbre_pass">Passager</label><br>
+                <input type="nbre_pass" value="310" name="nbre_pass"><br>
+                <label for="avion">Avion</label><br>
+                <select name="avion" id="avion_select">
+                    <option value="">--Choisissez un avion--</option>
+                    <option value="dog">dog</option>
+                    <option value="cat">cat</option>
+                    <option value="duck">duck</option>
+                    <option value="horse">horse</option>
+                    <option value="bunny">bunny</option>
+                    <option value="wolf">wolf</option>
+                </select>
+                <br>
+                <button><i class="fa-solid fa-plus"></i></button>
+            </form>
+        </div>
+        <script>
+                window.addEventListener('load', function(){
+                    // console.log('coucou');
+                    fetch("/volSelect")
+                    
+                    .then(res => res.text())
+                    //je fais la mise en page du résultat (dans le block de détails)
+                    .then(res => {
 
-            <button>OK</button>
-        </form>
+                        console.log(res)
+                    });
+                });
+            
+        </script>  
     </body>
 </html>

@@ -50,7 +50,8 @@
         h2{
             text-align: center;
         }
-        #title_liste{
+        
+        .title_liste{
             margin: auto;
             margin-top: 50px;
             margin-bottom: 50px;
@@ -62,6 +63,7 @@
             border-radius: 10px;
             width: 250px;
         }
+        
         #title_detail{
             text-shadow: 2px 2px 1px rgb(170, 165, 186);
         }
@@ -97,10 +99,25 @@
             font-size: 20px;
             width: 60%;
         }
+        #add{
+            margin-left: 10px;
+            border-radius: 50%;
+            padding: 3px;
+            background-color: rgb(222, 219, 235);
+            color: rgb(96, 92, 194);
+            text-shadow: 2px 2px 1px rgb(124, 105, 198);
+            text-decoration: none;
+        }
+        #add:hover{
+            color: rgb(199, 191, 241);
+            background-color: rgb(96, 92, 194);
+        }
+    
     </style>
     <h1>BWBAirlines <i class="fa-solid fa-plane-departure"></i></h1>
     <div id="display_container">
-        <h2 id="title_liste"><i class="fa-solid fa-plane-up"></i> LISTE DES VOLS</h2>
+        <h2 class="title_liste" ><i class="fa-solid fa-plane-up"></i> LISTE DES VOLS </h2>
+        <h2 class="title_liste">AJOUTER <a id="add" href="http://localhost:8080/create" target="_blank"> <i class="fa-solid fa-plus"></i></a></h2>
         <div id="liste">
             <table>
                 <tr>
