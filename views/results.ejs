@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><% title %></title>
+</head>
+<body>
+    <style>
+        html {color: lightgreen;background-color: black;}
+        table,th,tr,td {border-collapse: collapse; border: 1px solid red; padding: 4px 6px; text-align: center;}
+        a {color: white; }
+    </style>
+    
+    <table>
+        <tr>
+            
+            <th>serverName</th>
+            <th>IP adress</td>
+            
+        </tr>
+        <% display_results.forEach(function (item) { %>
+            <tr>
+                
+                <td><a href="detail/<%= item.ID %>"><%= item.serverName %></a></td>
+                <td><%= item.IPadr %></td>
+                
+</tr>
+        <% }) %>
+    </table>
+    
+
+</body>
+</html>

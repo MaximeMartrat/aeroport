@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Della+Respira&family=Poppins&family=Ubuntu&display=swap" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/c68e41c693.js" crossorigin="anonymous"></script>
+    <title>BWBAirlines</title>
+</head>
+<body>
+    <style>
+        html {
+            background-color: rgb(193, 193, 249);
+            font-family: 'Della Respira', serif;
+            font-family: 'Poppins', sans-serif;
+            font-family: 'Ubuntu', sans-serif;
+        }
+        body {
+            height: 80vh;
+            width: 98vw;
+            
+        }
+        img{
+            height:300px;
+            width:300px;
+            border: 1px solid rgba(89, 89, 89, 0.773) ;
+            border-radius: 10px;
+            box-shadow: 2px 5px 4px rgb(59, 58, 81);
+        }
+        #display_container{
+            display: grid;
+            grid-template-columns: 50% 50%;
+        }
+        table, th, tr, td{
+            border-collapse: collapse;
+            border: 2px solid rgb(134, 133, 166); 
+            padding: 4px 6px; 
+            text-align: center;
+            padding: 10px;
+        }
+        h1{
+            text-align: center;
+            font-size: 50px;
+            color: rgb(222, 219, 235);
+            text-shadow: 2px 3px 1px rgb(124, 105, 198);
+        }
+        h2{
+            text-align: center;
+        }
+        #title_liste{
+            margin: auto;
+            margin-top: 50px;
+            margin-bottom: 50px;
+            padding: 10px;
+            color: rgb(222, 219, 235);
+            text-shadow: 2px 2px 1px rgb(124, 105, 198);
+            background-color: rgb(96, 92, 194);
+            box-shadow: 5px 5px 10px rgb(76, 75, 106);
+            border-radius: 10px;
+            width: 250px;
+        }
+        #title_detail{
+            text-shadow: 2px 2px 1px rgb(170, 165, 186);
+        }
+        a {
+            color: rgb(96, 92, 194); 
+        }
+
+        a:hover {
+            color: rgb(11, 14, 62);
+            cursor: pointer;
+        }
+        #liste {
+            grid-column: 1;
+            margin-left: 50px;
+            box-shadow: 2px 5px 10px rgb(134, 133, 166);
+        }
+        #details {
+            grid-column: 2;
+            margin-top: 120px;
+            margin-left: 120px;
+            height: 45%;
+            width: 70%;
+            border-radius: 10px;
+            color: rgb(227, 227, 227);
+            background-color: rgb(96, 92, 194);
+            box-shadow: 5px 10px 10px rgb(76, 75, 106);
+        }
+        #det_text{
+            margin: auto;
+            margin-top: 50px;
+            line-height: 50px;
+            text-align: center;
+            font-size: 20px;
+            width: 60%;
+        }
+    </style>
+    <h1>BWBAirlines <i class="fa-solid fa-plane-departure"></i></h1>
+    <div id="display_container">
+        <h2 id="title_liste"><i class="fa-solid fa-plane-up"></i> LISTE DES VOLS</h2>
+        <div id="liste">
+            <table>
+                <tr>
+                    <th>Id_vol</th>
+                    <th>DEP</th>
+                    <th>ARR</th>
+                    <th>HOR</th>
+                    <th>Places</th>
+                    <th>Avion</th>
+                    <th>Pilote</th>
+                </tr>
+                <% display_results.forEach(function (item) { %>
+                    <tr>
+                        <td><%= item.id_vol %></td>
+                        <td><a id="<%= item.id_depart %>" class="aerolink"><%= item.villeDep %></a></td>
+                        <td><a id="<%= item.id_arrive %>" class="aerolink"><%= item.villeArr %></a></td>
+                        <td><%= item.horaire %></td>
+                        <td><%= item.nbre_pass %></td>
+                        <!--l'id de l'avion récupéré avec les datas est passée comme id du lien  -->
+                        <td><a id="<%= item.id_avion %>" class="avionlink"><%= item.type %></a></td>
+                        <!--l'id du pilote récupéré avec les datas est passée comme id du lien  -->
+                        <td><a id="<%= item.id_pilote %>" class="pilotlink"><%= item.nom %></a></td>
+                    </tr>
+                <% }) %>
+            </table>
+        </div>
+        <div id="details">
+            <h2 id="title_detail"><i class="fa-solid fa-circle-info"></i> DETAILS</h2>
+            <div id="det_text"></div>
+        </div>
+    </div>
+    <script>
+        //SELECT * FROM pilote WHERE id_pilot=??
+        //je fais la liste de tous les pilotes
+        let pilotList = document.querySelectorAll('.pilotlink');
+        //je boucle pour appliquer un event listener
+        pilotList.forEach(element => {
+            //event, callback
+            element.addEventListener('click', function(){
+                //j'envoie la requête sur le serveur : ressource = route (URL) => /pilote/??
+                fetch("/pilote/"+this.id)//l'id du pilote est passée
+                //je récupère un résultat sous forme de texte (ou json)
+                .then(res => res.text())
+                //je fais la mise en page du résultat (dans le block de détails)
+                .then(res => {
+                    mydisplay = JSON.parse(res)
+                    console.log(mydisplay);
+                    det_text.innerHTML= "Pilote n° " + mydisplay[0].id_pilote + "<br>Nom : " + mydisplay[0].nom + "<br>Qualification : " + mydisplay[0].qualification + "<br>Adresse : " + mydisplay[0].adresse + "<br>Salaire : " + mydisplay[0].salaire + " €"
+                });
+            });
+        });
+
+        //SELECT * FROM avion WHERE id_avion=??
+        //je fais la liste de tous les avions
+        let avionList = document.querySelectorAll('.avionlink');
+        //je boucle pour appliquer un event listener
+        avionList.forEach(element => {
+            //event, callback
+            element.addEventListener('click', function(){
+                //j'envoie la requête sur le serveur : ressource = route (URL) => /avion/??
+                fetch("/avion/"+this.id)//l'id de l'avion est passée
+                //je récupère un résultat sous forme de texte (ou json)
+                .then(res => res.text())
+                //je fais la mise en page du résultat (dans le block de détails)
+                .then(res => {
+                    mydisplay = JSON.parse(res)
+                    console.log(mydisplay);
+                    det_text.innerHTML= "Avion n° " + mydisplay[0].id_avion + "<br>Constructeur : " + mydisplay[0].constructeur + "<br>Type : " + mydisplay[0].type + "<br>Rayon d'action : " + mydisplay[0].rayon_action + " km<br>Capacite : " + mydisplay[0].capacite + "<br>Date d'achat : " + mydisplay[0].date_achat + "<br>Dernière revision : " + mydisplay[0].date_revision
+                });
+            });
+        });
+
+        //SELECT * FROM aeroport WHERE id_aeroport=??
+        //je fais la liste de tous les aeroports
+        let aeroList = document.querySelectorAll('.aerolink');
+        //je boucle pour appliquer un event listener
+        aeroList.forEach(element => {
+            //event, callback
+            element.addEventListener('click', function(){
+                //j'envoie la requête sur le serveur : ressource = route (URL) => /aeroport/??
+                fetch("/aeroport/"+this.id)//l'id de l'aeroport est passée
+                //je récupère un résultat sous forme de texte (ou json)
+                .then(res => res.text())
+                //je fais la mise en page du résultat (dans le block de détails)
+                .then(res => {
+                    mydisplay = JSON.parse(res)
+                    console.log(mydisplay);
+                    det_text.innerHTML= "<img src=" + mydisplay[0].URL_image + ">" +  "<br>Ville : " + mydisplay[0].ville + "<br>Nombre de pistes : " + mydisplay[0].nbre_pistes
+                });
+            });
+        });
+    </script>
+</body>
+</html>
