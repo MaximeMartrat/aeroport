@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Della+Respira&family=Poppins&family=Ubuntu&display=swap" rel="stylesheet">
+        <script src="https://kit.fontawesome.com/c68e41c693.js" crossorigin="anonymous"></script>
+        <title>BWBAirlines</title>
+    </head>
+    <body>
+        <style>
+            html {
+                background-color: rgb(193, 193, 249);
+                font-family: 'Della Respira', serif;
+                font-family: 'Poppins', sans-serif;
+                font-family: 'Ubuntu', sans-serif;
+            }
+            body {
+                height: 100vh;
+                width: 100vw;
+            }
+            form{
+                margin-left: 50px;
+            }
+            input{
+                height: 20px;
+                padding:5px;
+                border-radius: 5px;
+            }
+            button{
+                height: 30px;
+                padding:5px;
+                border-radius: 5px;
+            }
+            button:hover{
+                background-color:rgb(159, 159, 214);
+                color: white;
+            }
+            h2{
+                text-align: center;
+                font-size: 50px;
+                color: rgb(222, 219, 235);
+                text-shadow: 2px 2px 1px rgb(124, 105, 198);
+            }
+        </style>
+
+        <h2>Create all entities</h2>
+        <!-- un formulaire entité -->
+        <form id="create_avion" method="POST">
+            <label>Avion</label><br>
+            <input type="hidden" value="avion" name="table">
+            <input type="text" value="constructeur" name="constructeur">
+            <input type="text" value="type" name="type">
+            <input type="text" value="200" name="rayon_action">
+            <input type="text" value="200" name="capacite">
+            <input type="date" name="date_achat">
+            <input type="date" name="date_revision">
+            <button>OK</button>
+        </form>
+<br><br>
+        <form id="create_aeroport" method="POST">
+            <label>Aeroport</label><br>
+            <input type="hidden" value="aeroport" name="table">
+            <input type="text" value="ville" name="ville">
+            <input type="text" value="3" name="nbre_pistes">
+            <input type="text" value="/aero_img/avion.png" name="URL_image">
+
+            <button>OK</button>
+        </form>
+    </body>
+</html>

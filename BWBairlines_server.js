@@ -1,6 +1,7 @@
 const mysql = require('mysql2');
 const express = require('express');
-const { request } = require('express');
+const bodyParser = require('body-parser');
+
 
 //constants
 const PORT = 8080;
@@ -9,6 +10,7 @@ const HOST = '0.0.0.0';
 const app = express();
 
 app.use(express.static("public"));
+app.use(bodyParser.urlencoded({ extended: true }));
 app.set("view engine", "ejs");
 app.set("views", "./views");
 
@@ -98,7 +100,75 @@ app.get('/aeroport/:id', function(req,res){
             res.send(results) ;
         });
     })
+});
+
+app.get('/create', function(req,res){
+    res.render("create", { 'title': "ajouter un élément" })
 })
+
+app.post('/create', function(req,res){
+    //faire la requete qui permet de créer l'élément
+    console.log(req.body.table);
+    let values = req.body ;
+    let tabname = req.body.table ;
+
+    if(tabname == 'avion') {
+        conHandler.connect(function(err) {
+            if(err) throw err ;
+            let constructeur = req.body.constructeur ;
+            let type = req.body.type ;
+            let rayon_action = req.body.rayon_action ;
+            let capacite = req.body.capacite ;
+            let date_achat = req.body.date_achat ;
+            let date_revision = req.body.date_revision ;
+            let myquery = "INSERT INTO " + tabname + " (constructeur, type, rayon_action, capacite, date_achat, date_revision) " ;
+            myquery += "VALUES ('"+  
+            constructeur + "' , '" +
+            type + "' , '" +
+            rayon_action + "' , '" +
+            capacite + "' , " +
+            "DATE_FORMAT('" + date_achat +"', '%Y/%m/%d')" + " , " +
+            "DATE_FORMAT('" + date_revision +"', '%Y/%m/%d')" +  " ) " ;
+            console.log(myquery) ;
+            //j'execute la requete
+            conHandler.query(myquery, function(err, results, fields) {
+                if(err) throw err;
+                console.log(results);
+                res.render("confirm", { 'element': "l'avion a bien été créé" })
+            })
+        })
+    }
+    if(tabname == 'aeroport') {
+        conHandler.connect(function(err) {
+            if(err) throw err ;
+            let ville = req.body.ville ;
+            let nbre_pistes = req.body.nbre_pistes ;
+            let URL_image = req.body.URL_image ;
+            let myquery = "INSERT INTO " + tabname + " (ville, nbre_pistes, URL_image) " ;
+            myquery += "VALUES ('"+  
+            ville + "' , " +
+            nbre_pistes + " , '" +
+            URL_image   +  "'  ) " ;
+            console.log(myquery) ;
+            //j'execute la requete
+            conHandler.query(myquery, function(err, results, fields) {
+                if(err) throw err;
+                console.log(results);
+                res.render("confirm", { 'element': "l'aeroport a bien été créé" })
+            })
+        })
+    }
+});
+
+app.get('/mod_avion', function(req,res){
+    res.render("mod_avion", { 'title' : "action sur entité avion" })
+})
+
+/*
+deux options :
+-soit faire des routes par action : Create/Update/Delete
+-soit faire des routes par entité : C/U/D par table
+*/
 
 app.listen(PORT, HOST);
 console.log(`running on http://${HOST}:${PORT}`);
