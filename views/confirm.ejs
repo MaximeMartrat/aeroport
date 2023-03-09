@@ -33,8 +33,31 @@
                 margin-top: 100px;
                 margin-left: 30%;
             }
+            #clear{
+                margin-left: 45%;
+                margin-top: 100px;
+                width: 100px;
+                height: 70px;
+                font-size: 40px;
+                border-radius: 10px;
+                border: 1px solid rgb(193, 193, 249);
+                background-color: rgb(124, 105, 198);
+                color: rgb(222, 219, 235);
+            }
+            #clear:hover{
+                border: 1px solid rgb(124, 105, 198);
+                background-color: rgb(222, 219, 235);
+                color: rgb(124, 105, 198);
+            }
         </style>
         <h3><%= element %></h3>
         <p id="good"><img src="/aero_img/avion.png"></p>
+        <button id="clear">OK</button>
     </body>
+    <script>
+        document.querySelector("#clear")
+        clear.addEventListener('click', function(){
+            window.location.href="/"
+        })    
+    </script>
 </html>
