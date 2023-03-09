@@ -19,7 +19,8 @@ let conHandler = mysql.createConnection(
         host:"172.17.0.2",
         user:"maximem",
         password:"maxm2023",
-        database: "BeWebAirlines"
+        database: "BeWebAirlines",
+        multipleStatements: true
     }
 );
 
@@ -180,43 +181,54 @@ app.post('/create', function(req,res){
     } else if(tabname == 'vol'){
         conHandler.connect(function(err) {
             if(err) throw err ;
-            let id_depart = req.body.id_depart ;
-            let id_arrive = req.body.id_arrive ;
+            let passager = req.body.nbre_pass ;
+            let avion = req.body.select_avion ;
+            let pilote = req.body.select_pilote;
+            let depart = req.body.select_depart;
+            let arrivee = req.body.select_arrivee ;
+            let date = req.body.date ;
             let horaire = req.body.horaire ;
-            let nbre_pass = req.body.nbre_pass ;
-            let id_pilote = req.body.id_pilote
-            let myquery = "INSERT INTO " + tabname + " (nom, adresse, salaire, qualification) " ;
-            myquery += "VALUES ('"+  
-            nom + "' , '" +
-            adresse + "' , " +
-            salaire + " , '" +
-            qualification + "' ) " ;
+            let myquery = "INSERT INTO " + tabname + " (nbre_pass, id_avion, id_pilote, id_depart, id_arrive, horaire) " ;
+            myquery += "VALUES ("+  
+            passager + " , " + 
+            avion + " , " +
+            pilote + " , " +
+            depart + " , " +
+            arrivee + " , '" +
+            date + " " + horaire  +  "'  ) " ;
             console.log(myquery) ;
             //j'execute la requete
             conHandler.query(myquery, function(err, results, fields) {
                 if(err) throw err;
                 console.log(results);
-                res.render("confirm", { 'element': "le pilote a bien été ajouté" })
-            })
-        })
+                res.render("confirm", { 'element': "le vol a bien été ajouté dans la liste des vols" })
+            });
+        });
     }
 });
 
-// app.get('/volSelect', function(req,res) {
-//     // let myquery = "SELECT avion.id_avion, avion.constructeur, avion.type, pilote.pilote_id, pilote.nom, aeroport.id_aeroport, aeroport.ville FROM vol" ;
-//     // myquery += "INNER JOIN aeroport ON vol.id_depart=aeroport.id_aeroport " ;
-//     // myquery += "INNER JOIN avion ON vol.id_avion=avion.id_avion " ;  
-//     // myquery += "INNER JOIN pilote ON vol.id_pilote=pilote.id_pilote";
-//     let avionTab = "SELECT constructeur, ville, nom FROM avion, aeroport, pilote";
-//     let aeroportTab = "SELECT ville FROM aeroport";
-//     let piloteTab = "SELECT nom FROM pilote";
-//     let allTab = avionTab + " UNION " + aeroportTab + " UNION " + piloteTab 
-//     console.log(allTab)
-//     conHandler.query(allTab, function (err, results, fields) {
-//             if (err) throw err;
-//             console.log(results);
-//     });//end funct da
-// });
+ app.get('/volSelect',function(req,res){
+    let allResults = {};
+    let avionTab = " SELECT * FROM avion";
+    let aeroportTab = "SELECT * FROM aeroport";
+    let piloteTab = "SELECT * FROM pilote";
+    conHandler.query(avionTab, function(err, results, fields) {
+        if (err) throw err;
+        allResults.avion = results;
+        conHandler.query(aeroportTab, function(err, results, fields) {
+            if (err) throw err;
+            allResults.aeroport = results;
+            conHandler.query(piloteTab, function(err, results, fields) {
+                if (err) throw err;
+                allResults.pilote = results;
+                res.send(allResults)
+            });
+        })
+    });
+});
+
+
+
 
 app.get('/mod_avion', function(req,res){
     res.render("mod_avion", { 'title' : "action sur entité avion" })

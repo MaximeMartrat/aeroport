@@ -50,9 +50,13 @@
             }
             h3{
                 margin-left: 20px ;
+                margin-bottom: 50px;
                 font-size: 20px;
                 color:rgb(96, 92, 194);
                 text-shadow: 2px 2px 0px rgb(242, 238, 243);
+            }
+            label{
+                margin-left: 10px;
             }
             input{
                 font-size: 15px;
@@ -67,7 +71,10 @@
             input:hover, select:hover{
                 cursor: pointer;
                 border: 1px solid rgb(144, 144, 241);
-                background-color: rgb(231, 231, 250);;
+                background-color: rgb(231, 231, 250);
+            }
+            input:focus, select:focus{
+                outline:none;
             }
             select{
                 height: 35px;
@@ -82,8 +89,8 @@
                 height: 50px;
                 width: 50px;
                 font-size: 30px;
-                margin-top: 10px;
-                margin-left: 25%;
+                margin-top: 50px;
+                margin-left: 28%;
                 color: white;
                 border-radius: 10px;
                 background-color: rgb(96, 92, 194);
@@ -105,6 +112,7 @@
 
         <h2>Ajouter des éléments</h2>
         <div id="grid_container">
+
             <!-- un formulaire entité -->
             <form id="create_avion" method="POST">
                 <h3>AVION</h3>
@@ -124,7 +132,9 @@
                 <br>
                 <button><i class="fa-solid fa-plus"></i></button>
             </form>
+
             <br><br>
+
             <form id="create_aeroport" method="POST">
                 <h3>AEROPORT</h3>
                 <input type="hidden" value="aeroport" name="table">
@@ -137,7 +147,9 @@
                 <br>
                 <button><i class="fa-solid fa-plus"></i></button>
             </form>
+
             <br><br>
+
             <form id="create_pilote" method="POST">
                 <h3>PILOTE</h3>
                 <input type="hidden" value="pilote" name="table">
@@ -152,39 +164,74 @@
                 <br>
                 <button><i class="fa-solid fa-plus"></i></button>
             </form>
+
             <br><br>
+
             <form id="create_vol" method="POST">
                 <h3>VOL</h3>
                 <input type="hidden" value="vol" name="table">
                 <label for="nbre_pass">Passager</label><br>
                 <input type="nbre_pass" value="310" name="nbre_pass"><br>
                 <label for="avion">Avion</label><br>
-                <select name="avion" id="avion_select">
-                    <option value="">--Choisissez un avion--</option>
-                    <option value="dog">dog</option>
-                    <option value="cat">cat</option>
-                    <option value="duck">duck</option>
-                    <option value="horse">horse</option>
-                    <option value="bunny">bunny</option>
-                    <option value="wolf">wolf</option>
-                </select>
+                <select name="select_avion" id="select_avion"></select><br>
+                <label for="select_pilote">Pilote</label><br>
+                <select name="select_pilote" id="select_pilote"></select><br>
+                <label for="select_depart">Depart</label><br>
+                <select name="select_depart" id="select_depart"></select><br>
+                <label for="select_arrivee">Arrivee</label><br>
+                <select name="select_arrivee" id="select_arrivee"></select><br>
+                <label for="date">Date</label><br>
+                <input type="date" name="date"><br>
+                <label for="horaire">Horaire</label><br>
+                <input type="time" name="horaire">
                 <br>
                 <button><i class="fa-solid fa-plus"></i></button>
             </form>
+
         </div>
         <script>
-                window.addEventListener('load', function(){
-                    // console.log('coucou');
-                    fetch("/volSelect")
-                    
+            window.addEventListener("load", function() {
+                console.log("Hello windowloaded!");
+                fetch("/volSelect")
                     .then(res => res.text())
-                    //je fais la mise en page du résultat (dans le block de détails)
                     .then(res => {
-
-                        console.log(res)
+                        myresults = JSON.parse(res);
+                        console.log(myresults)
+                        let av_selec = document.getElementById("select_avion");
+                        let pil_selec = document.getElementById("select_pilote");
+                        let ville_dep = document.getElementById("select_depart");
+                        let ville_arr = document.getElementById("select_arrivee");
+                        myresults.avion.forEach((item) => {
+                            let opt = document.createElement("option");
+                            opt.value = item.id_avion;
+                            opt.text = item.type;
+                            av_selec.add(opt);
+                        });
+                        myresults.pilote.forEach((item) => {
+                            let opt = document.createElement("option");
+                            opt.value = item.id_pilote;
+                            opt.text = item.nom;
+                            pil_selec.add(opt);
+                        });
+                        myresults.aeroport.forEach((item) => {
+                            let opt = document.createElement("option");
+                            opt.value = item.id_aeroport;
+                            opt.text = item.ville;
+                            ville_dep.add(opt);
+                        });
+                        myresults.aeroport.forEach((item) => {
+                            let opt = document.createElement("option");
+                            opt.value = item.id_aeroport;
+                            opt.text = item.ville;
+                            ville_arr.add(opt);
+                        });
                     });
-                });
+            });
             
+            select_depart.addEventListener('change', function(){
+                console.log(this.value);
+            })
+
         </script>  
     </body>
 </html>
