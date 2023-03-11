@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Della+Respira&family=Poppins&family=Ubuntu&display=swap" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/c68e41c693.js" crossorigin="anonymous"></script>
+    <title><%= title %></title>
+</head>
+<body>
+    <style>
+        html {
+            background-color: rgb(193, 193, 249);
+            font-family: 'Della Respira', serif;
+            font-family: 'Poppins', sans-serif;
+            font-family: 'Ubuntu', sans-serif;
+        }
+        div{
+            margin-top: 20%;
+            font-size: 50px;
+            color: rgb(222, 219, 235);
+            text-shadow: 2px 3px 1px rgb(124, 105, 198);
+            text-align: center;
+        }
+    </style>
+    <div><%= message %></div>
+    <script>
+        sessionStorage.setItem("is_logged", true);
+        if(sessionStorage.getItem("is_logged")=='true'){
+            function redirect() {
+            location.href='/liste'
+        }
+        setTimeout(redirect, 1000);
+        }
+    </script>
+</body>
+</html>

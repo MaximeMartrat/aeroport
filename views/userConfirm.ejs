@@ -8,7 +8,7 @@
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Della+Respira&family=Poppins&family=Ubuntu&display=swap" rel="stylesheet">
         <script src="https://kit.fontawesome.com/c68e41c693.js" crossorigin="anonymous"></script>
-        <title>Confirmation</title>
+        <title>Enregistrement utilisateur</title>
     </head>
     <body>
         <style>
@@ -50,14 +50,14 @@
                 color: rgb(124, 105, 198);
             }
         </style>
-        <h3><%= element %></h3>
+        <h3><%= title %></h3>
         <p id="good"><img src="/aero_img/avion.png"></p>
         <button id="clear">OK</button>
     </body>
     <script>
         document.querySelector("#clear")
         clear.addEventListener('click', function(){
-            location.href="/liste"
+            window.location.href="/login"
         })    
     </script>
 </html>

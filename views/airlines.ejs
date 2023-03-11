@@ -8,7 +8,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Della+Respira&family=Poppins&family=Ubuntu&display=swap" rel="stylesheet">
     <script src="https://kit.fontawesome.com/c68e41c693.js" crossorigin="anonymous"></script>
-    <title>BWBAirlines</title>
+    <title><%= title %></title>
 </head>
 <body>
     <style>
@@ -32,30 +32,53 @@
         #head_liste{
             height: 120px;
             display: grid;
-            grid-template-columns: 30% 40% 10% 20% ;
+            grid-template-columns: 10% 35% 65% ;
             grid-template-rows: 20% 60% 20% ;
         }
         #display_container{
-            display: grid;
-            grid-template-columns: 50% 50%;
+            display: flex;
         }
-        table, th, tr, td{
+        table{
+            border: 2px solid;
+            text-align: center;
+            margin-top: 10px;
             border-collapse: collapse;
-            border: 2px solid rgb(134, 133, 166); 
-            padding: 4px 6px; 
-            text-align: center;
-            padding: 10px;
+            overflow: hidden;
+            grid-column: 2;
+            grid-row: 1;
+            border-radius: 10px;
+            box-shadow: 5px 10px 10px rgb(112, 111, 128);
+            height: 600px;
+            width:700px;
+            background-color: rgb(95, 92, 194);
         }
-        h1{
-            text-align: center;
+        th{
+            background-color: rgb(95, 92, 194);
+            border: 2px solid rgb(113, 113, 128);
+            color:rgb(193, 193, 249);
+            width:50px;
+            height:40px;
+        }
+        tr, td{
+            border: 2px solid rgb(95, 92, 194);
+            background-color: rgb(193, 193, 249);
+            width:50px;
+            height:40px;
+        }
+        .page{
             font-size: 50px;
-            color: rgb(222, 219, 235);
-            text-shadow: 2px 3px 1px rgb(124, 105, 198);
         }
-        h2{
-            text-align: center;
+        #prev{
+            grid-column: 1;
+            grid-row: 1;
+            margin-top: 250px;
         }
-        
+        #next{
+            grid-column: 3;
+            grid-row: 1;
+            margin-left: 20px;
+            margin-top: 250px;
+        }
         .title_liste{
             grid-column: 2;
             grid-row: 2;
@@ -68,29 +91,37 @@
             border-radius: 10px;
             width: 250px;
         }
-        
+        h1{
+            text-align: center;
+            font-size: 50px;
+            color: rgb(222, 219, 235);
+            text-shadow: 2px 3px 1px rgb(124, 105, 198);
+        }
+        h2{
+            text-align: center;
+        }
+        #liste {
+            grid-column: 1;
+            margin-left: 50px;
+            display:grid;
+            grid-template-columns: 5% 90% 5%;
+        }
         #title_detail{
             text-shadow: 2px 2px 1px rgb(170, 165, 186);
         }
         a {
             color: rgb(96, 92, 194); 
         }
-
         a:hover {
             color: rgb(11, 14, 62);
             cursor: pointer;
-        }
-        #liste {
-            grid-column: 1;
-            margin-left: 50px;
-            box-shadow: 2px 5px 10px rgb(134, 133, 166);
         }
         #details {
             grid-column: 2;
             margin-top: 10px;
             margin-left: 120px;
-            height: 45%;
-            width: 70%;
+            height: 600px;
+            width: 40%;
             border-radius: 10px;
             color: rgb(227, 227, 227);
             background-color: rgb(95, 92, 194);
@@ -105,9 +136,10 @@
             width: 60%;
         }
         #add{
-            grid-column: 3;
+            grid-column: 2;
             grid-row: 2;
             margin: auto;
+            margin-left: 450px;
             width:50px;
             height:50px;
             font-size: 20px;
@@ -124,23 +156,22 @@
             background-color: rgb(193, 193, 249);
             box-shadow: none;
         }
-    
     </style>
     <h1>BWBAirlines <i class="fa-solid fa-plane-departure"></i></h1>
-    <div id="display_container">
-        <div id="head_liste">
+    <div id="head_liste">
         <h2 class="title_liste" ><i class="fa-solid fa-plane-up"></i> LISTE DES VOLS </h2><button id="add"><i class="fa-solid fa-plus"></i></button>
-        </div>
+    </div>
+    <div id="display_container">
         <div id="liste">
             <table>
                 <tr>
-                    <th>Id_vol</th>
-                    <th>DEP</th>
-                    <th>ARR</th>
-                    <th>HOR</th>
-                    <th>Places</th>
-                    <th>Avion</th>
-                    <th>Pilote</th>
+                    <th>N°</th>
+                    <th>DEPART</th>
+                    <th>ARRIVEE</th>
+                    <th>HORAIRES</th>
+                    <th>PASSAGERS</th>
+                    <th>AVION</th>
+                    <th>PILOTE</th>
                 </tr>
                 <% display_results.forEach(function (item) { %>
                     <tr>
@@ -156,6 +187,8 @@
                     </tr>
                 <% }) %>
             </table>
+            <a id="prev" class="page" href="/liste?offset=<%= Math.max(offset - 10, 0) %>"><i class="fa-solid fa-caret-left"></i></a>
+            <a id="next" class="page" href="/liste?offset=<%= offset + 10 %>"><i class="fa-solid fa-caret-right"></i></a>
         </div>
         <div id="details">
             <h2 id="title_detail"><i class="fa-solid fa-circle-info"></i> DETAILS</h2>
@@ -163,6 +196,11 @@
         </div>
     </div>
     <script>
+        if(sessionStorage.getItem("is_logged")=='true'){
+            ;
+        } else {
+            location.href = "/"
+        }
         document.getElementById("add").addEventListener("click", function() {
             window.location.href = "/create";
         });

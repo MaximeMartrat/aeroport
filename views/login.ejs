@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Della+Respira&family=Poppins&family=Ubuntu&display=swap" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/c68e41c693.js" crossorigin="anonymous"></script>
+    <title><%= title %></title>
+</head>
+<body>
+    <style>
+        html {
+            background-color: rgb(193, 193, 249);
+            font-family: 'Della Respira', serif;
+            font-family: 'Poppins', sans-serif;
+            font-family: 'Ubuntu', sans-serif;
+        }
+        h1{
+            text-align: center;
+            font-size: 50px;
+            color: rgb(222, 219, 235);
+            text-shadow: 2px 3px 1px rgb(124, 105, 198);
+        }
+        #container{
+            margin-top: 18%;
+            display:flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        input{
+            font-size: 15px;
+            height: 20px;
+            width: 250px;
+            padding:5px;
+            margin-top: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            border: 1px solid rgb(193, 193, 249);
+        }
+        input:focus{
+            outline: none;
+        }
+        input:hover {
+            cursor: pointer;
+            border: 1px solid rgb(144, 144, 241);
+            background-color: rgb(231, 231, 250);
+        }
+        input:invalid {
+            border: 2px solid red;
+        }
+        button{
+            height: 32px;
+            padding:5px;
+            margin-left: 35%;
+            color: white;
+            border-radius: 5px;
+            background-color: rgb(96, 92, 194);
+            border:1px solid rgb(193, 193, 249);
+            margin-top: 20px;
+        }
+        button:hover{
+            color: rgb(96, 92, 194);
+            background-color: rgb(193, 193, 249);
+            border:1px solid rgb(96, 92, 194);
+            cursor: pointer;
+        }
+        a{
+            cursor: pointer;
+        }
+        #message{
+            color:rgb(96, 92, 194);
+            margin-bottom: 10px;
+        }
+    </style>
+    <div id="container">
+        <h1>BWBAirlines <i class="fa-solid fa-plane-departure"></i></h1>
+        <div id="message"><%= message %></div>
+        <form method="post" action="/check">
+            <input type="text" id="user" name="username" placeholder="identifiant"><br>
+            <input type="password" id="pass" pattern="^(?=.*\d)(?=.*[A-Z])(?=.*[a-z])(?=.*[^\w\d\s:])([^\s]){8,16}$"name="password" placeholder="mot de passe"><br>
+            <button id="connect">Connexion</button>&nbsp&nbsp<a href="/signIn">inscription</a>
+        </form>
+    </div>
+</body>
+</html>

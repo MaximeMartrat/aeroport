@@ -8,7 +8,7 @@
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Della+Respira&family=Poppins&family=Ubuntu&display=swap" rel="stylesheet">
         <script src="https://kit.fontawesome.com/c68e41c693.js" crossorigin="anonymous"></script>
-        <title>Ajouter</title>
+        <title><%= title %></title>
     </head>
     <body>
         <style>
@@ -32,20 +32,12 @@
             form{
                 margin-left: 50px;
             }
-            #create_avion{
-                grid-column: 2;
-                grid-row: 2;
-            }
-            #create_aeroport{
+            #avion_update{
                 grid-column: 3;
                 grid-row: 2;
             }
-            #create_pilote{
+            #avion_delete{
                 grid-column: 4;
-                grid-row: 2;
-            }
-            #create_vol{
-                grid-column: 5;
                 grid-row: 2;
             }
             h3{
@@ -101,20 +93,21 @@
             border:1px solid rgb(96, 92, 194);
             cursor: pointer;
         }
-            h2{
-                text-align: center;
-                font-size: 50px;
-                color: rgb(222, 219, 235);
-                text-shadow: 2px 2px 1px rgb(124, 105, 198);
-            }
+        h2{
+            text-align: center;
+            font-size: 50px;
+            color: rgb(222, 219, 235);
+            text-shadow: 2px 2px 1px rgb(124, 105, 198);
+        }
         </style>
 
-        <h2>Ajouter des éléments</h2>
+        <h2>Avion</h2>
         <div id="grid_container">
 
             <!-- un formulaire entité -->
-            <form id="create_avion" method="POST">
-                <h3>AVION &nbsp&nbsp<a href="/mod_avion"><i class="fa-solid fa-pen-to-square"></i></a></h3>
+            <form id="avion_update" method="get">
+                <h3>UPDATE</h3>
+                <select id="select_avion"></select>
                 <input type="hidden" value="avion" name="table">
                 <label for="constructeur">Constructeur</label><br>
                 <input type="text" value="constructeur" name="constructeur"><br>
@@ -129,62 +122,16 @@
                 <label for="date_revision">Dernière révision</label><br>
                 <input type="date" name="date_revision">
                 <br>
-                <button>Valider</button>
+                <button>Modifier</button>
             </form>
 
             <br><br>
 
-            <form id="create_aeroport" method="POST">
-                <h3>AEROPORT  &nbsp&nbsp<a href="#"><i class="fa-solid fa-pen-to-square"></i></a></h3>
-                <input type="hidden" value="aeroport" name="table">
-                <label for="ville">Ville</label><br>
-                <input type="text" value="ville" name="ville"><br>
-                <label for="nbre_piste">Pistes</label><br>
-                <input type="text" value="3" name="nbre_pistes"><br>
-                <label for="URL_image">Image</label><br>
-                <input type="text" value="/aero_img/avion.png" name="URL_image">
+            <form id="avion_delete" method="get">
+                <h3>DELETE</h3>
+                <select id="delete_avion"></select>
                 <br>
-                <button>Valider</button>
-            </form>
-
-            <br><br>
-
-            <form id="create_pilote" method="POST">
-                <h3>PILOTE &nbsp&nbsp<a href="#"><i class="fa-solid fa-pen-to-square"></i></a></h3>
-                <input type="hidden" value="pilote" name="table">
-                <label for="nom">Nom</label><br>
-                <input type="text" value="nom" name="nom"><br>
-                <label for="adresse">Adresse</label><br>
-                <input type="text" value="adresse" name="adresse"><br>
-                <label for="salaire">Salaire</label><br>
-                <input type="text" value="25000" name="salaire"><br>
-                <label for="qualification">Qualification</label><br>
-                <input type="text" value="qualification" name="qualification">
-                <br>
-                <button>Valider</button>
-            </form>
-
-            <br><br>
-
-            <form id="create_vol" method="POST">
-                <h3>VOL &nbsp&nbsp<a href="#"><i class="fa-solid fa-pen-to-square"></i></a></h3>
-                <input type="hidden" value="vol" name="table">
-                <label for="nbre_pass">Passager</label><br>
-                <input type="nbre_pass" value="310" name="nbre_pass"><br>
-                <label for="avion">Avion</label><br>
-                <select name="select_avion" id="select_avion"></select><br>
-                <label for="select_pilote">Pilote</label><br>
-                <select name="select_pilote" id="select_pilote"></select><br>
-                <label for="select_depart">Depart</label><br>
-                <select name="select_depart" id="select_depart"></select><br>
-                <label for="select_arrivee">Arrivee</label><br>
-                <select name="select_arrivee" id="select_arrivee"></select><br>
-                <label for="date">Date</label><br>
-                <input type="date" name="date"><br>
-                <label for="horaire">Horaire</label><br>
-                <input type="time" name="horaire">
-                <br>
-                <button>Valider</button>
+                <button>Effacer</button>
             </form>
 
         </div>
@@ -202,32 +149,18 @@
                         myresults = JSON.parse(res);
                         console.log(myresults)
                         let av_selec = document.getElementById("select_avion");
-                        let pil_selec = document.getElementById("select_pilote");
-                        let ville_dep = document.getElementById("select_depart");
-                        let ville_arr = document.getElementById("select_arrivee");
+                        let av_delete = document.getElementById("delete_avion");
                         myresults.avion.forEach((item) => {
                             let opt = document.createElement("option");
                             opt.value = item.id_avion;
                             opt.text = item.type;
                             av_selec.add(opt);
                         });
-                        myresults.pilote.forEach((item) => {
+                        myresults.avion.forEach((item) => {
                             let opt = document.createElement("option");
-                            opt.value = item.id_pilote;
-                            opt.text = item.nom;
-                            pil_selec.add(opt);
-                        });
-                        myresults.aeroport.forEach((item) => {
-                            let opt = document.createElement("option");
-                            opt.value = item.id_aeroport;
-                            opt.text = item.ville;
-                            ville_dep.add(opt);
-                        });
-                        myresults.aeroport.forEach((item) => {
-                            let opt = document.createElement("option");
-                            opt.value = item.id_aeroport;
-                            opt.text = item.ville;
-                            ville_arr.add(opt);
+                            opt.value = item.id_avion;
+                            opt.text = item.type;
+                            av_delete.add(opt);
                         });
                     });
             });

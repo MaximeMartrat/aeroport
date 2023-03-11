@@ -1,6 +1,7 @@
 const mysql = require('mysql2');
 const express = require('express');
 const bodyParser = require('body-parser');
+const { request } = require('express');
 
 
 //constants
@@ -14,7 +15,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.set("view engine", "ejs");
 app.set("views", "./views");
 
-let conHandler = mysql.createConnection(
+let pool = mysql.createConnection(
     {
         host:"172.17.0.2",
         user:"maximem",
@@ -24,41 +25,116 @@ let conHandler = mysql.createConnection(
     }
 );
 
-conHandler.connect(function (err){
+pool.connect(function (err){
     if(err) throw err ;
     console.log("DB BewebAirlines connected !")
 })
 
-app.get('/', (req, res) => {
-    // get all records from vol
-    let myquery = "SELECT vol.id_vol, dep.ville AS villeDep, arr.ville AS villeArr, DATE_FORMAT(vol.horaire, '%d/%m/%Y %hh%m') AS horaire, vol.nbre_pass, avion.type, pilote.nom, pilote.id_pilote, avion.id_avion, vol.id_depart, vol.id_arrive FROM vol " ;
+app.get("/", (req,res) =>{
+    res.redirect('/login');
+});
+
+app.get("/login", (req,res) =>{
+    res.render('login', {'title':'Login', 'message':'Merci de vous connecter'})
+});
+
+
+app.post("/check", (req, res) =>{
+    // console.log(req.body);
+    //variables du contenu du body
+    let username = req.body.username;
+    let password = req.body.password;
+    //requete SQL
+    let myquery = `SELECT username, password FROM user WHERE username = ? AND password = ? `;
+    //connection à la database
+    pool.connect((err) =>{
+        if(err) throw err ;
+        //execute la requete
+        pool.query(myquery, [username, password], (err, results) =>{
+            if(err) throw err ;
+            // console.log(results);
+            // si tableau n'est pas vide
+            if(results.length == 1) {
+                //user + password valide
+                res.render('accueil', { 'title':'accueil', 'message': `Bienvenue ${username}`});
+            }
+            else if (results.length > 1){
+                res.render('login',{ 'title':'login','message': `Problème, plusieurs utilisateurs dans la DB`})
+            }
+            //sinon l'utilisateur ou le password n'existe pas
+            else {
+                res.render('login', {'title':'login' ,'message': `Identifiant ou mot de passe incorrect`})
+            }
+        });
+    });
+});
+
+app.get('/signIn', (req,res)=>{
+    res.render('createUser');
+})
+
+app.post('/createUser', (req,res)=>{
+    console.log(req.body)
+    let username = req.body.username ;
+    let email = req.body.email ;
+    let password = req.body.password ;
+
+    let myquery = "INSERT INTO user (username, email, password) VALUES (?,?,?)"
+    pool.connect((err)=>{
+        if(err) throw err
+        pool.query(myquery, [ username,email,password], (err,results)=>{
+            if(err) throw err
+            res.render('login', {'title':'login' ,'message': `Vous vous êtes bien enregistré`})
+        }) 
+    })
+})
+
+app.get('/liste', (req, res) => {
+    // Récupérer les enregistrements pour la page actuelle
+    let myquery = "SELECT vol.id_vol, dep.ville AS villeDep, arr.ville AS villeArr, DATE_FORMAT(vol.horaire, '%d/%m/%Y %Hh%m') AS horaire, vol.nbre_pass, avion.type, pilote.nom, pilote.id_pilote, avion.id_avion, vol.id_depart, vol.id_arrive FROM vol " ;
     myquery += "INNER JOIN aeroport AS dep ON vol.id_depart=dep.id_aeroport " ;
     myquery += "INNER JOIN aeroport AS arr ON vol.id_arrive=arr.id_aeroport " ;
     myquery += "INNER JOIN avion ON vol.id_avion=avion.id_avion " ;  
-    myquery += "INNER JOIN pilote ON vol.id_pilote=pilote.id_pilote" 
-    conHandler.connect(function (err) {
+    myquery += "INNER JOIN pilote ON vol.id_pilote=pilote.id_pilote " ;
+    myquery += "LIMIT ? OFFSET ?";
+    const limit = 10;
+    let offset;
+    if (req.query.offset) {
+        offset = parseInt(req.query.offset, 10);
+    } else {
+        offset = 0;
+    }
+    pool.connect(function (err) {
         if (err) throw err;
-        conHandler.query(myquery, function (err, results, fields) {
+        // Envoyer la requête au serveur MySQL
+        pool.query(myquery, [limit, offset], function (err, results, fields) {
             if (err) throw err;
             console.log(results);
-            res.render("airlines", { 'title': "les vols de la compagnie", 'display_results': results });
+            res.render("airlines", { 'title': "BeWeB airlines", 'display_results': results,  'offset': offset });
         });//end funct
     });//end connect
 });//en app.get
+
+app.get('/liste/:offset', (req, res)=>{
+    const offset = parseInt(req.params.offset, 10);
+})
+
+
 
 //route qui sert les requetes fetch du client
 app.get('/pilote/:id', function(req,res){
     console.log(req.params.id);
     //je me connecte à la BDD
-    conHandler.connect(function (err) {
+    pool.connect(function (err) {
         if(err) throw err;
         //je récupère l'enregistrement (il ne peut y en avoir qu'un)
-        let myquery = "SELECT * FROM pilote WHERE `id_pilote`="+ req.params.id ;
+        let myquery = "SELECT * FROM pilote WHERE id_pilote = ?";
+        const reqId = req.params.id;
         //j'execute la requête
-        conHandler.query(myquery, function (err, results, fields) {
+        pool.query(myquery, [reqId],function (err, results, fields) {
             if(err) throw err;
             //je vérifie sur la console que j'ai bien quelque chose
-            console.log(results);
+            // console.log(results);
             //je retourne les résultats
             res.send(results) ;
         });
@@ -67,17 +143,17 @@ app.get('/pilote/:id', function(req,res){
 
 //route qui sert les requetes fetch du client
 app.get('/avion/:id', function(req,res){
-    console.log(req.params.id);
+    // console.log(req.params.id);
     //je me connecte à la BDD
-    conHandler.connect(function (err) {
+    pool.connect(function (err) {
         if(err) throw err;
         //je récupère l'enregistrement (il ne peut y en avoir qu'un)
         let myquery = "SELECT *,DATE_FORMAT(avion.date_achat, '%d/%m/%Y') AS date_achat, DATE_FORMAT(avion.date_revision, '%d/%m/%Y') AS date_revision FROM avion WHERE `id_avion`="+ req.params.id ;
         //j'execute la requête
-        conHandler.query(myquery, function (err, results, fields) {
+        pool.query(myquery, function (err, results, fields) {
             if(err) throw err;
             //je vérifie sur la console que j'ai bien quelque chose
-            console.log(results);
+            // console.log(results);
             //je retourne les résultats
             res.send(results) ;
         });
@@ -88,15 +164,16 @@ app.get('/avion/:id', function(req,res){
 app.get('/aeroport/:id', function(req,res){
     console.log(req.params.id);
     //je me connecte à la BDD
-    conHandler.connect(function (err) {
+    pool.connect(function (err) {
         if(err) throw err;
         //je récupère l'enregistrement (il ne peut y en avoir qu'un)
-        let myquery = "SELECT * FROM aeroport WHERE `id_aeroport`=" + req.params.id ;
+        let myquery = "SELECT * FROM aeroport WHERE `id_aeroport`= ? ";
+        const reqId = req.params.id ;
         //j'execute la requête
-        conHandler.query(myquery, function (err, results, fields) {
+        pool.query(myquery, [reqId],function (err, results, fields) {
             if(err) throw err;
             //je vérifie sur la console que j'ai bien quelque chose
-            console.log(results);
+            // console.log(results);
             //je retourne les résultats
             res.send(results) ;
         });
@@ -114,7 +191,7 @@ app.post('/create', function(req,res){
     let tabname = req.body.table ;
 
     if(tabname == 'avion') {
-        conHandler.connect(function(err) {
+        pool.connect(function(err) {
             if(err) throw err ;
             let constructeur = req.body.constructeur ;
             let type = req.body.type ;
@@ -132,14 +209,14 @@ app.post('/create', function(req,res){
             "DATE_FORMAT('" + date_revision +"', '%Y/%m/%d')" +  " ) " ;
             console.log(myquery) ;
             //j'execute la requete
-            conHandler.query(myquery, function(err, results, fields) {
+            pool.query(myquery, function(err, results, fields) {
                 if(err) throw err;
                 console.log(results);
                 res.render("confirm", { 'element': "l'avion a bien été créé" })
             })
         })
     } else if(tabname == 'aeroport') {
-        conHandler.connect(function(err) {
+        pool.connect(function(err) {
             if(err) throw err ;
             let ville = req.body.ville ;
             let nbre_pistes = req.body.nbre_pistes ;
@@ -151,14 +228,14 @@ app.post('/create', function(req,res){
             URL_image   +  "'  ) " ;
             console.log(myquery) ;
             //j'execute la requete
-            conHandler.query(myquery, function(err, results, fields) {
+            pool.query(myquery, function(err, results, fields) {
                 if(err) throw err;
                 console.log(results);
                 res.render("confirm", { 'element': "l'aeroport a bien été créé" })
             })
         })
     } else if(tabname == 'pilote') {
-        conHandler.connect(function(err) {
+        pool.connect(function(err) {
             if(err) throw err ;
             let nom = req.body.nom ;
             let adresse = req.body.adresse ;
@@ -172,14 +249,14 @@ app.post('/create', function(req,res){
             qualification + "' ) " ;
             console.log(myquery) ;
             //j'execute la requete
-            conHandler.query(myquery, function(err, results, fields) {
+            pool.query(myquery, function(err, results, fields) {
                 if(err) throw err;
                 console.log(results);
                 res.render("confirm", { 'element': "le pilote a bien été ajouté" })
             })
         })
     } else if(tabname == 'vol'){
-        conHandler.connect(function(err) {
+        pool.connect(function(err) {
             if(err) throw err ;
             let passager = req.body.nbre_pass ;
             let avion = req.body.select_avion ;
@@ -198,7 +275,7 @@ app.post('/create', function(req,res){
             date + " " + horaire  +  "'  ) " ;
             console.log(myquery) ;
             //j'execute la requete
-            conHandler.query(myquery, function(err, results, fields) {
+            pool.query(myquery, function(err, results, fields) {
                 if(err) throw err;
                 console.log(results);
                 res.render("confirm", { 'element': "le vol a bien été ajouté dans la liste des vols" })
@@ -206,19 +283,18 @@ app.post('/create', function(req,res){
         });
     }
 });
-
  app.get('/volSelect',function(req,res){
     let allResults = {};
     let avionTab = " SELECT * FROM avion";
     let aeroportTab = "SELECT * FROM aeroport";
     let piloteTab = "SELECT * FROM pilote";
-    conHandler.query(avionTab, function(err, results, fields) {
+    pool.query(avionTab, function(err, results, fields) {
         if (err) throw err;
         allResults.avion = results;
-        conHandler.query(aeroportTab, function(err, results, fields) {
+        pool.query(aeroportTab, function(err, results, fields) {
             if (err) throw err;
             allResults.aeroport = results;
-            conHandler.query(piloteTab, function(err, results, fields) {
+            pool.query(piloteTab, function(err, results, fields) {
                 if (err) throw err;
                 allResults.pilote = results;
                 res.send(allResults)
@@ -227,11 +303,8 @@ app.post('/create', function(req,res){
     });
 });
 
-
-
-
 app.get('/mod_avion', function(req,res){
-    res.render("mod_avion", { 'title' : "action sur entité avion" })
+    res.render("mod_avion", { 'title' : "Modification des avions" })
 })
 
 /*
